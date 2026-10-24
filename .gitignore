@@ -1,0 +1,10 @@
+# 計測結果
+results/
+# 手順の途中で生成する IAM / S3 / VPC エンドポイントのポリシー（アカウント ID やリソース ID が入る）
+*-policy.json
+# Python
+__pycache__/
+*.pyc
+.venv/
+# macOS
+.DS_Store
