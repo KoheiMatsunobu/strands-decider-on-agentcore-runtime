@@ -2,7 +2,7 @@
 
 判定専用の小さなモデル [Strands Decider 2B](https://strandsagents.com/blog/introducing-strands-decider/) を、Amazon Bedrock AgentCore Runtime（microVM）の V1 / V2 に同じコンテナで載せ、新しいセッションの立ち上がりを比べるための検証コードです。
 
-- 記事：[タイトル未定](https://builder.aws.com/[記事のURL])
+- 記事：[AgentCore Runtime V2でStrands Decider 2Bの作成が失敗した原因は、Graviton2のbf16だった](https://builder.aws.com/[記事のURL])
 - リージョン：東京（ap-northeast-1）
 - 構成：VPC（NAT ゲートウェイなし）＋ VPC エンドポイント。モデルのファイルは Hugging Face から S3 にコピーし、実行時は Hugging Face に接続しない
 
@@ -92,20 +92,45 @@ python3 scripts/hf_to_s3.py --bucket decider-models-$(aws sts get-caller-identit
 以下のような出力結果が表示されます。
 
 ```
-OK Qwen/Qwen3.5-2B-Base/LICENSE 0.0MiB 0.5s (0MiB/s)
-OK Qwen/Qwen3.5-2B-Base/config.json 0.0MiB 0.3s (0MiB/s)
-OK Qwen/Qwen3.5-2B-Base/model.safetensors-00001-of-00001.safetensors 4337.5MiB 193.4s (22MiB/s)
-OK Qwen/Qwen3.5-2B-Base/model.safetensors.index.json 0.1MiB 0.3s (0MiB/s)
-OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/.gitattributes 0.0MiB 0.3s (0MiB/s)
-...
-OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/lora/adapter_model.safetensors 192.5MiB 13.7s (14MiB/s)
-...
+OK Qwen/Qwen3.5-2B-Base/LICENSE 0.0MiB 0.2s (0MiB/s)
+OK Qwen/Qwen3.5-2B-Base/config.json 0.0MiB 0.2s (0MiB/s)
+OK Qwen/Qwen3.5-2B-Base/model.safetensors-00001-of-00001.safetensors 4337.5MiB 126.2s (34MiB/s)
+OK Qwen/Qwen3.5-2B-Base/model.safetensors.index.json 0.1MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/.gitattributes 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/LICENSE.md 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/MANIFEST.sha256 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/README.md 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/chat_template.jinja 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/internal/eval.log 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/internal/recipe_heldout.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/health.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/manifest.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/paired.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/paired.txt 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/results.jsonl 0.2MiB 0.3s (1MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/run_meta.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/jevbench-w4096/summary.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/eval/summary.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/head.safetensors 12.0MiB 2.1s (6MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/lora/adapter_config.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/lora/adapter_model.safetensors 192.5MiB 7.6s (25MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/provenance.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/strands_decider_config.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/tokenizer.json 19.1MiB 2.4s (8MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/tokenizer_config.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/train_config.json 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/training/configs/v1-qwen3.5-2b-s0.yaml 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/training/configs/v1-qwen3.5-2b-s1.yaml 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/training/configs/v1-qwen3.5-2b-s2.yaml 0.0MiB 0.3s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/training/data_sha256.txt 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/training/sources.md 0.0MiB 0.2s (0MiB/s)
+OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610/training/stages.jsonl 0.0MiB 0.2s (0MiB/s)
 OK StrandsAgents/strands-decider-2B-qwen3.5-v1-2610 refs/main -> 216d1ccb46a9e9b036eb9187b248db98480f77d4
 
-完了: 4.45GiB、226秒
+完了: 4.45GiB、146秒
 ```
 
-4.45GiBを、約4分でコピーできました。
+4.45GiBを、約2分半でコピーできました。
 
 > 📖 公式ドキュメント：[AWS CloudShell User Guide](https://docs.aws.amazon.com/cloudshell/latest/userguide/welcome.html) / [put-bucket-versioning(AWS CLI Command Reference)](https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-versioning.html)
 
@@ -183,9 +208,17 @@ aws s3 sync s3://$MODEL_BUCKET/hf-cache/ ~/.cache/decider-offline/
 docker run --rm --network none --cpus 2 --memory 8g --memory-swap 8g -e HF_HUB_OFFLINE=1 -v "$HOME/.cache/decider-offline:/root/.cache/huggingface" decider-agentcore:latest
 ```
 
-`[init] cpu ...`、`[init] load=... warmup=... total=...`、`[init] app.run at ...`の3行が出れば成功です(出力の例は記事を参照)。
+以下のような出力結果が表示されます。
 
-ネットワークなしでも読み込めて、メモリ(RSS)は3.43GiBと、8GBに十分収まっています。確認できたら`Ctrl + C`で止めます。
+```
+[init] cpu {'cpu_part': '0x000', 'bf16': True, 'sve': False, 'torch_capability': 'DEFAULT', 'mkldnn': True}
+Loading weights: 100%|██████████| 320/320 [00:00<00:00, 1741.97it/s]
+[transformers] `chunk_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+[init] load=3.7s warmup=13.0s total=21.1s {'rss_gib': 3.42, 'mem_available_gib': 13.97}
+[init] app.run at 05:34:29 (process +21.1s)
+```
+
+`[init] app.run at ...`の行が出れば成功です。`[transformers]`の行は、高速化用のライブラリが入っていないため標準の実装で動かすという知らせで、結果は正しいです。ネットワークなしでも読み込めて、メモリ(RSS)は3.42GiBと、8GBに十分収まっています。確認できたら`Ctrl + C`で止めます。
 
 > 💡 `mem_available_gib`は、Docker Desktopの仮想マシン全体の空きメモリです。コンテナに割り当てた8GBとは別の値なので、ここでは参考にしません。
 
